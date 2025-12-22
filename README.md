@@ -19,7 +19,7 @@ New theme should generated into themes/ folder
 ## Installing icon theme
 ```bash  
 npm start
-sudo cp -r ./macOSTahoe /usr/share/icons/
+sudo cp -r ./themes/macOSTahoe /usr/share/icons/
 ```
 ## Set icon theme as active
 ```bash  
