@@ -72,7 +72,11 @@ export class CommentElement extends LineElement {
 
     constructor(comment: string) {
         super(comment);
-        this.comment = comment.trimStart().slice(1);
+        comment = comment.trimStart();
+        if (comment.at(0) == "#") {
+            comment = comment.slice(1);
+        }
+        this.comment = comment;
     }
 
     toString(lineSeperator = '\r\n'): string {
