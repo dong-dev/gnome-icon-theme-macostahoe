@@ -14,7 +14,8 @@ You should have to add new key to imageNameMap dictionary for png file name whic
 # Install
 ## Installing icon theme
 ```bash  
-sudo cp -r ../macOSTahoe /usr/share/icons/
+npm start
+sudo cp -r ./macOSTahoe /usr/share/icons/
 ```
 ## Set icon theme as active
 ```bash  
