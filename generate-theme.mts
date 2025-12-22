@@ -66,7 +66,7 @@ const headerGroup = new GroupElement(
 document.children.push(headerGroup);
 document.children.push(...folderGroups);
 await rm(resolve('.', OUTPUT_FOLDER), { recursive: true, force: true });
-await mkdir(resolve('.', OUTPUT_FOLDER));
+await mkdir(resolve('.', OUTPUT_FOLDER), { recursive: true });
 await writeFile(resolve('.', OUTPUT_FOLDER, 'index.theme'), document.toString())
 
 const imageNameService = new ImageNameService('./original/database/image-name-map-database.ini');

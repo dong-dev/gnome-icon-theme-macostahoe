@@ -1,5 +1,6 @@
+import { join } from 'path'
 export const THEME_NAME = "macOSTahoe";
-export const OUTPUT_FOLDER = THEME_NAME;
+export const OUTPUT_FOLDER = join('./themes', THEME_NAME);
 
 export const SIZES = [
     16,
