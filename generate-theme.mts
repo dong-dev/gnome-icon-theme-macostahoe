@@ -1,17 +1,44 @@
-import { rm, mkdir, writeFile } from "node:fs/promises";
-import { OUTPUT_FOLDER, SIZES, THEME_NAME } from "./constants.mts";
-import { CommentElement, GroupElement, IniDocument, ItemElement, LineElement } from "./models/ini-document.mts";
+#!/usr/bin/env node
+
+import {
+    rm,
+    mkdir,
+    writeFile,
+} from "node:fs/promises";
+import {
+    OUTPUT_FOLDER,
+    SIZES,
+    THEME_NAME,
+} from "./constants.mts";
+import {
+    CommentElement,
+    GroupElement,
+    IniDocument,
+    ItemElement,
+    LineElement,
+} from "./models/ini-document.mts";
 import { resolve } from "node:path";
 import { ImageNameService } from "./services/image-name.service.mts";
 import { GenerateImageService } from "./services/generate-image.service.mts";
 
-
+/**
+ * Build the theme.index document
+ */
 const document = new IniDocument();
 
-const folderGroups: GroupElement[] = [];
+/**
+ * Define png folders
+ */
+const pngFolderGroups: GroupElement[] = [];
 
+/**
+ * loop sizes then create folder group items (both normal and hidpi)
+ */
 for (const size of SIZES) {
-    folderGroups.push(
+    pngFolderGroups.push(
+        /**
+         * Normal icon folder
+         */
         new GroupElement(
             `${size}x${size}/apps`,
             [
@@ -21,6 +48,9 @@ for (const size of SIZES) {
                 new LineElement(''),
             ]
         ),
+        /**
+         * HiDPI icon folder
+         */
         new GroupElement(
             `${size}x${size}@2/apps`,
             [
@@ -34,7 +64,10 @@ for (const size of SIZES) {
     );
 }
 
-const scalableGroup = new GroupElement(
+/**
+ * Add scalable group
+ */
+const scalableFolderGroup = new GroupElement(
     'scalable/apps',
     [
         new ItemElement("Context", "Applications"),
@@ -44,9 +77,18 @@ const scalableGroup = new GroupElement(
         new ItemElement("Type", "Scalable"),
     ]
 );
-folderGroups.push(scalableGroup);
 
+/**
+ * Icon folder groups
+ */
+const iconFolderGroups = [
+    ...pngFolderGroups,
+    scalableFolderGroup,
+]
 
+/**
+ * Icon Theme header group
+ */
 const headerGroup = new GroupElement(
     'Icon Theme',
     [
@@ -57,14 +99,21 @@ const headerGroup = new GroupElement(
             'Adwaita'
         ].join(",")),
         new LineElement(''),
-        new CommentElement('# Directory list'),
-        new ItemElement('Directories', [...folderGroups.map(group => group.name), ''].join(',')),
+        new CommentElement('Directory list'),
+        new ItemElement(
+            'Directories',
+            [
+                ...iconFolderGroups.map(group => group.name),
+                ''
+            ].join(',')
+        ),
         new LineElement(''),
     ]
 );
 
 document.children.push(headerGroup);
-document.children.push(...folderGroups);
+document.children.push(...iconFolderGroups);
+
 await rm(resolve('.', OUTPUT_FOLDER), { recursive: true, force: true });
 await mkdir(resolve('.', OUTPUT_FOLDER), { recursive: true });
 await writeFile(resolve('.', OUTPUT_FOLDER, 'index.theme'), document.toString())
@@ -73,9 +122,10 @@ const imageNameService = new ImageNameService('./original/database/image-name-ma
 const generateImageService = new GenerateImageService();
 await imageNameService.refresh();
 
-for (const { name } of folderGroups) {
+for (const { name } of iconFolderGroups) {
     await mkdir(resolve('.', OUTPUT_FOLDER, name), { recursive: true })
 }
+
 for (const originalName of Object.keys(imageNameService.imageNameMap)) {
     const expectedNames = imageNameService.imageNameMap[originalName];
     if (expectedNames === null || !Array.isArray(expectedNames)) {
