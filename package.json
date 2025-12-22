@@ -12,7 +12,7 @@
   "type": "commonjs",
   "main": "index.js",
   "scripts": {
-    "start": "node ./generate-theme.mts",
+    "start": "./generate-theme.mts",
     "test": "node --test ./test/*"
   },
   "devDependencies": {
