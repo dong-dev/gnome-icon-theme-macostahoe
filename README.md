@@ -26,3 +26,6 @@ sudo cp -r ./themes/macOSTahoe /usr/share/icons/
 gsettings set org.gnome.desktop.interface icon-theme 'Adwaita'
 gsettings set org.gnome.desktop.interface icon-theme 'macOSTahoe'
 ```
+
+## Places list:  
+/usr/share/icons/Adwaita/scalable/places
