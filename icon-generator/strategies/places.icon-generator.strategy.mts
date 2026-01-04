@@ -19,7 +19,7 @@ export class PlacesIconGeneratorStrategy extends IconGeneratorStrategy {
                 console.warn('Invalid size!', originalName);
                 continue;
             }
-            await this.generateImageService.generateCroppedImage(originalName, 928, 928);
+            await this.generateImageService.generateCroppedImage(originalName, 1000 + 24, 1000 + 24);
         }
 
     }
