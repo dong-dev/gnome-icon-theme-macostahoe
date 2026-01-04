@@ -1,5 +1,5 @@
 import { mkdir } from "node:fs/promises";
-import { ImageContext, OUTPUT_FOLDER, SIZES } from "../constants.mts";
+import { ImageContext, OUTPUT_FOLDER, SIZES, TEMPORARY_FOLDER } from "../constants.mts";
 import { GroupElement, ItemElement, LineElement } from "../models/ini-document.mts";
 import { GenerateImageService } from "../services/generate-image.service.mts";
 import { ImageNameService } from "../services/image-name.service.mts";
@@ -21,6 +21,7 @@ export class IconGeneratorStrategy {
         for (const { name } of this.groupElements) {
             await mkdir(resolve('.', OUTPUT_FOLDER, name), { recursive: true })
         }
+        await mkdir(resolve('.', TEMPORARY_FOLDER, this.generateImageService.context.toString()), { recursive: true })
     }
 
     getFolderGroupElements(): GroupElement[] {
@@ -79,5 +80,18 @@ export class IconGeneratorStrategy {
                 }
             }
         }
+    }
+    async generateCroppedImages() {
+        await this.imageNameService.refresh()
+
+        for (const originalName of Object.keys(this.imageNameService.imageNameMap)) {
+            const size = await this.generateImageService.identify(originalName);
+            if (size.Width !== 1024 || size.Height !== 1024) {
+                console.warn('Invalid size!', originalName);
+                continue;
+            }
+            await this.generateImageService.generateCroppedImage(originalName);
+        }
+
     }
 }

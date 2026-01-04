@@ -7,6 +7,18 @@
         {
             "type": "node",
             "request": "launch",
+            "name": "Generate Application Desktop Entires",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "program": "${workspaceFolder}/generate-application-desktop-entries.mts",
+            "outFiles": [
+                "${workspaceFolder}/**/*.js"
+            ]
+        },
+        {
+            "type": "node",
+            "request": "launch",
             "name": "Generate Theme",
             "skipFiles": [
                 "<node_internals>/**"

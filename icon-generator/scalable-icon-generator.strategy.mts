@@ -20,4 +20,6 @@ export class ScalableIconGeneratorStrategy extends IconGeneratorStrategy {
             }
         }
     }
+    async generateCroppedImages() {
+    }
 }

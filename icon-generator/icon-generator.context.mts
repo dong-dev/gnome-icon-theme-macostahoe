@@ -57,6 +57,7 @@ export class IconGeneratorContext {
         return await this.strategy.createFolder();
     }
     async generateImages() {
+        await this.strategy.generateCroppedImages();
         return await this.strategy.generateImages();
     }
 }

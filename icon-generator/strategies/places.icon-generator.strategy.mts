@@ -9,4 +9,18 @@ export class PlacesIconGeneratorStrategy extends IconGeneratorStrategy {
         this.generateImageService.setContext(this.imageContext);
         this._createFolderGroupElements(this.imageContext, 'Places');
     }
+
+    async generateCroppedImages() {
+        await this.imageNameService.refresh()
+
+        for (const originalName of Object.keys(this.imageNameService.imageNameMap)) {
+            const size = await this.generateImageService.identify(originalName);
+            if (size.Width !== 1024 || size.Height !== 1024) {
+                console.warn('Invalid size!', originalName);
+                continue;
+            }
+            await this.generateImageService.generateCroppedImage(originalName, 928, 928);
+        }
+
+    }
 }

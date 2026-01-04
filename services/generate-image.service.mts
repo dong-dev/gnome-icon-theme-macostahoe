@@ -1,5 +1,5 @@
 import { resolve } from "node:path";
-import { ImageContext, OUTPUT_FOLDER } from "../constants.mts";
+import { ImageContext, OUTPUT_FOLDER, TEMPORARY_FOLDER } from "../constants.mts";
 import { Exec } from "../utils/exec.mts";
 import { cp } from "node:fs/promises";
 
@@ -30,6 +30,10 @@ export class GenerateImageService {
         const outputFolder = resolve(OUTPUT_FOLDER, `./${size}x${size}${isHiDPI ? "@2" : ""}/${this.context}`);
         return resolve(outputFolder, `${expectedName}.png`);
     }
+    getTemporaryFilePath(expectedName: string) {
+        const outputFolder = resolve(TEMPORARY_FOLDER, `./${this.context}`);
+        return resolve(outputFolder, `${expectedName}.png`);
+    }
 
     /**
      * Generate image my the file input and output, cross platform
@@ -43,10 +47,8 @@ export class GenerateImageService {
         if (this.isDarwin) {
             return await this.generateImage(originalName, expectedName, size, isHiDPI);
         }
-        const imageSizes = await this.identify(originalName);
-
         const binaryName = 'magick';
-        const inputFile = this.getInputFilePath(originalName);
+        const inputFile = this.getTemporaryFilePath(originalName);
         const outputFile = this.getOutputFilePath(expectedName, size, isHiDPI);
         const dpiOption = `-units PixelsPerInch -set density ${isHiDPI ? 72 * 2 : 72}`;
         const resizeOption = `-resize ${isHiDPI ? size * 2 : size}x`;
@@ -63,7 +65,7 @@ export class GenerateImageService {
 
     async generateImageDarwin(originalName: string, expectedName: string, size: number, isHiDPI: boolean = false) {
         const binaryName = 'sips';
-        const inputFile = this.getInputFilePath(originalName);
+        const inputFile = this.getTemporaryFilePath(originalName);
         const outputFile = this.getOutputFilePath(expectedName, size, isHiDPI);
         const dpiOption = `--setProperty dpiWidth ${isHiDPI ? 72 * 2 : 72} --setProperty dpiHeight ${isHiDPI ? 72 * 2 : 72}`;
         const resizeOption = `--resampleHeightWidth ${isHiDPI ? size * 2 : size} ${isHiDPI ? size * 2 : size}`;
@@ -142,6 +144,23 @@ export class GenerateImageService {
             Width,
             Height,
         }
+    }
+
+    async generateCroppedImage(originalName: string, width: number = 1024, height: number = 1024) {
+        // magick image.jpg -gravity Center -crop 200x200+0+0 cropped_center.jpg
+
+        const binaryName = 'magick';
+        const inputFile = this.getInputFilePath(originalName);
+        const outputFile = this.getTemporaryFilePath(originalName);
+        const cropOption = `-gravity Center -crop ${width}x${height}+0+0`;
+        const outputFileOption = outputFile;
+        const command = [
+            binaryName,
+            inputFile,
+            cropOption,
+            outputFileOption,
+        ].join(" ");
+        return await Exec(command)
     }
 
     async copySvgFile(originalName: string, expectedName: string) {

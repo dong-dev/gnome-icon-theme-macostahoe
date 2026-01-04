@@ -12,6 +12,28 @@ Inherits=Adwaita`;
     assert.strictEqual(document.children.length, 1);
 });
 
+test('Read and Write', () => {
+    const content = `[Desktop Entry]
+Version=1.0
+Name=Keyboard External
+Exec=/usr/bin/gnome-control-center keyboard %u
+Terminal=false
+Type=Application
+MimeType=x-scheme-handler/anaconda-gnome-control-center;
+StartupNotify=true
+Categories=GNOME;GTK;Settings;HardwareSettings;
+Actions=Region;
+NoDisplay=true
+X-Desktop-File-Install-Version=0.28
+
+[Desktop Action Region]
+Name=Region & Language
+Exec=/usr/bin/gnome-control-center keyboard
+`;
+    const document = new IniDocument(content)
+    assert.strictEqual(content, document.toString('\n'));
+});
+
 
 test('Document Parser With Empty Key', () => {
     const content = `[Icon Theme]
