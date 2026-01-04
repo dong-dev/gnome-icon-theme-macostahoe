@@ -6,8 +6,9 @@ import {
     writeFile,
 } from "node:fs/promises";
 import {
+    ImageContext,
     OUTPUT_FOLDER,
-    SIZES,
+    TEMPORARY_FOLDER,
     THEME_NAME,
 } from "./constants.mts";
 import {
@@ -18,8 +19,7 @@ import {
     LineElement,
 } from "./models/ini-document.mts";
 import { resolve } from "node:path";
-import { ImageNameService } from "./services/image-name.service.mts";
-import { GenerateImageService } from "./services/generate-image.service.mts";
+import { IconGeneratorContext } from "./icon-generator/icon-generator.context.mts";
 
 /**
  * Build the theme.index document
@@ -29,62 +29,25 @@ const document = new IniDocument();
 /**
  * Define png folders
  */
-const pngFolderGroups: GroupElement[] = [];
+const iconFolderGroups: GroupElement[] = [];
+
+const IconGenerators: IconGeneratorContext[] = [
+    new IconGeneratorContext(ImageContext.Actions),
+    // // new IconGeneratorContext(ImageContext.Apps),
+    // // new IconGeneratorContext(ImageContext.MimeTypes),
+    // // new IconGeneratorContext(ImageContext.Places),
+    // new IconGeneratorContext(ImageContext.ScalableApps),
+]
 
 /**
  * loop sizes then create folder group items (both normal and hidpi)
  */
-for (const size of SIZES) {
-    pngFolderGroups.push(
-        /**
-         * Normal icon folder
-         */
-        new GroupElement(
-            `${size}x${size}/apps`,
-            [
-                new ItemElement('Size', "" + size),
-                new ItemElement('Context', 'Applications'),
-                new ItemElement('Type', 'Threshold'),
-                new LineElement(''),
-            ]
-        ),
-        /**
-         * HiDPI icon folder
-         */
-        new GroupElement(
-            `${size}x${size}@2/apps`,
-            [
-                new ItemElement('Size', "" + size),
-                new ItemElement('Scale', '2'),
-                new ItemElement('Context', 'Applications'),
-                new ItemElement('Type', 'Threshold'),
-                new LineElement(''),
-            ]
-        ),
+for (const iconGenerator of IconGenerators) {
+    iconFolderGroups.push(
+        ...iconGenerator.getFolderGroupElements()
     );
 }
 
-/**
- * Add scalable group
- */
-const scalableFolderGroup = new GroupElement(
-    'scalable/apps',
-    [
-        new ItemElement("Context", "Applications"),
-        new ItemElement("Size", "128"),
-        new ItemElement("MinSize", "8"),
-        new ItemElement("MaxSize", "512"),
-        new ItemElement("Type", "Scalable"),
-    ]
-);
-
-/**
- * Icon folder groups
- */
-const iconFolderGroups = [
-    ...pngFolderGroups,
-    scalableFolderGroup,
-]
 
 /**
  * Icon Theme header group
@@ -116,27 +79,12 @@ document.children.push(...iconFolderGroups);
 
 await rm(resolve('.', OUTPUT_FOLDER), { recursive: true, force: true });
 await mkdir(resolve('.', OUTPUT_FOLDER), { recursive: true });
-await writeFile(resolve('.', OUTPUT_FOLDER, 'index.theme'), document.toString())
+await writeFile(resolve('.', OUTPUT_FOLDER, 'index.theme'), document.toString());
 
-const imageNameService = new ImageNameService('./original/database/image-name-map-database.ini');
-const generateImageService = new GenerateImageService();
-await imageNameService.refresh();
+await rm(resolve('.', TEMPORARY_FOLDER), { recursive: true, force: true });
+await mkdir(resolve('.', TEMPORARY_FOLDER), { recursive: true });
 
-for (const { name } of iconFolderGroups) {
-    await mkdir(resolve('.', OUTPUT_FOLDER, name), { recursive: true })
-}
-
-for (const originalName of Object.keys(imageNameService.imageNameMap)) {
-    const expectedNames = imageNameService.imageNameMap[originalName];
-    if (expectedNames === null || !Array.isArray(expectedNames)) {
-        continue;
-    }
-    for (const expectedName of expectedNames) {
-        for (const size of SIZES) {
-            const [result1x, result2x] = await Promise.all([
-                generateImageService.generateImage(originalName, expectedName, size),
-                generateImageService.generateImage(originalName, expectedName, size, true),
-            ])
-        }
-    }
+for (const iconGenerator of IconGenerators) {
+    await iconGenerator.createFolder()
+    await iconGenerator.generateImages();
 }
