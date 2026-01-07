@@ -1,0 +1,8 @@
+windowcontrols button image:not(:hover) {
+    background-color: transparent;
+}
+
+windowcontrols button {
+    padding-left: 2px;
+    padding-right: 1px;
+}
