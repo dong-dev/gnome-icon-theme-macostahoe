@@ -2,8 +2,8 @@ import { ImageContext } from "../../constants.mts";
 import { GroupElement, ItemElement } from "../../models/ini-document.mts";
 import { ScalableIconGeneratorStrategy } from "../scalable-icon-generator.strategy.mts";
 
-export class ScalableAppsIconGeneratorStrategy extends ScalableIconGeneratorStrategy {
-    readonly imageContext = ImageContext.ScalableApps;
+export class ScalableUserInterfaceGeneratorStrategy extends ScalableIconGeneratorStrategy {
+    readonly imageContext = ImageContext.ScalableUserInterface;
 
 
     constructor() {
@@ -14,8 +14,8 @@ export class ScalableAppsIconGeneratorStrategy extends ScalableIconGeneratorStra
             new GroupElement(
                 this.imageContext.path,
                 [
-                    new ItemElement("Context", "Applications"),
-                    new ItemElement("Size", "128"),
+                    new ItemElement("Context", "UI"),
+                    new ItemElement("Size", "16"),
                     new ItemElement("MinSize", "8"),
                     new ItemElement("MaxSize", "512"),
                     new ItemElement("Type", "Scalable"),

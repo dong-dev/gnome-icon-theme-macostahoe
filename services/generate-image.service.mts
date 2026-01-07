@@ -27,11 +27,11 @@ export class GenerateImageService {
     }
 
     getOutputFilePath(expectedName: string, size: number, isHiDPI: boolean = false) {
-        const outputFolder = resolve(OUTPUT_FOLDER, `./${size}x${size}${isHiDPI ? "@2" : ""}/${this.context}`);
+        const outputFolder = resolve(OUTPUT_FOLDER, `./${size}x${size}${isHiDPI ? "@2" : ""}/${this.context.path}`);
         return resolve(outputFolder, `${expectedName}.png`);
     }
     getTemporaryFilePath(expectedName: string) {
-        const outputFolder = resolve(TEMPORARY_FOLDER, `./${this.context}`);
+        const outputFolder = resolve(TEMPORARY_FOLDER, `./${this.context.path}`);
         return resolve(outputFolder, `${expectedName}.png`);
     }
 
@@ -48,7 +48,8 @@ export class GenerateImageService {
             return await this.generateImage(originalName, expectedName, size, isHiDPI);
         }
         const binaryName = 'magick';
-        const inputFile = this.getTemporaryFilePath(originalName);
+        const isSymbolic = expectedName.endsWith('-symbolic');
+        const inputFile = isSymbolic && size <= 36 ? this.getTemporaryFilePath(originalName) : this.getInputFilePath(originalName);
         const outputFile = this.getOutputFilePath(expectedName, size, isHiDPI);
         const dpiOption = `-units PixelsPerInch -set density ${isHiDPI ? 72 * 2 : 72}`;
         const resizeOption = `-resize ${isHiDPI ? size * 2 : size}x`;
@@ -65,7 +66,8 @@ export class GenerateImageService {
 
     async generateImageDarwin(originalName: string, expectedName: string, size: number, isHiDPI: boolean = false) {
         const binaryName = 'sips';
-        const inputFile = this.getTemporaryFilePath(originalName);
+        const isSymbolic = expectedName.endsWith('-symbolic');
+        const inputFile = isSymbolic && size <= 36 ? this.getTemporaryFilePath(originalName) : this.getInputFilePath(originalName);
         const outputFile = this.getOutputFilePath(expectedName, size, isHiDPI);
         const dpiOption = `--setProperty dpiWidth ${isHiDPI ? 72 * 2 : 72} --setProperty dpiHeight ${isHiDPI ? 72 * 2 : 72}`;
         const resizeOption = `--resampleHeightWidth ${isHiDPI ? size * 2 : size} ${isHiDPI ? size * 2 : size}`;
@@ -165,7 +167,7 @@ export class GenerateImageService {
 
     async copySvgFile(originalName: string, expectedName: string) {
         const inputFile = `./original/${this.context}/${originalName}.svg`;
-        const outputFolder = resolve(OUTPUT_FOLDER, ...this.context.toString().split('-'));
+        const outputFolder = resolve(OUTPUT_FOLDER, this.context.path);
         const outputFile = resolve(outputFolder, `${expectedName}.svg`);
         await cp(inputFile, outputFile);
     }

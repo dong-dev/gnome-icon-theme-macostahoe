@@ -34,9 +34,12 @@ const iconFolderGroups: GroupElement[] = [];
 const IconGenerators: IconGeneratorContext[] = [
     new IconGeneratorContext(ImageContext.Actions),
     new IconGeneratorContext(ImageContext.Apps),
+    new IconGeneratorContext(ImageContext.Devices),
     new IconGeneratorContext(ImageContext.MimeTypes),
     new IconGeneratorContext(ImageContext.Places),
     new IconGeneratorContext(ImageContext.ScalableApps),
+    new IconGeneratorContext(ImageContext.ScalableUserInterface),
+    new IconGeneratorContext(ImageContext.UserInterface),
 ]
 
 /**

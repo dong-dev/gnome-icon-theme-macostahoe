@@ -37,7 +37,7 @@ export class IconGeneratorStrategy {
                  * Normal icon folder
                  */
                 new GroupElement(
-                    `${size}x${size}/${imageContext}`,
+                    `${size}x${size}/${imageContext.path}`,
                     [
                         new ItemElement('Size', "" + size),
                         new ItemElement('Context', context),
@@ -49,7 +49,7 @@ export class IconGeneratorStrategy {
                  * HiDPI icon folder
                  */
                 new GroupElement(
-                    `${size}x${size}@2/${imageContext}`,
+                    `${size}x${size}@2/${imageContext.path}`,
                     [
                         new ItemElement('Size', "" + size),
                         new ItemElement('Scale', '2'),

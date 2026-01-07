@@ -20,14 +20,23 @@ export const SIZES = [
 
 export class ImageContext {
     value: string = '';
-    constructor(value: string) {
+    path: string = '';
+    constructor(value: string, path?: string) {
         this.value = value;
+        if (path === undefined) {
+            this.path = value;
+        } else {
+            this.path = path;
+        }
     }
-    static Apps: ImageContext = new ImageContext('apps');
-    static Places: ImageContext = new ImageContext('places');
-    static ScalableApps: ImageContext = new ImageContext('scalable-apps');
-    static MimeTypes: ImageContext = new ImageContext('mimetypes');
     static Actions: ImageContext = new ImageContext('actions');
+    static Apps: ImageContext = new ImageContext('apps');
+    static Devices: ImageContext = new ImageContext('devices');
+    static MimeTypes: ImageContext = new ImageContext('mimetypes');
+    static Places: ImageContext = new ImageContext('places');
+    static ScalableApps: ImageContext = new ImageContext('scalable-apps', 'scalable/apps');
+    static ScalableUserInterface: ImageContext = new ImageContext('scalable-ui', 'scalable/ui');
+    static UserInterface: ImageContext = new ImageContext('ui');
     toString(): string {
         return this.value;
     }

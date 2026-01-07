@@ -2,9 +2,12 @@ import { ImageContext } from "../constants.mts";
 import { IconGeneratorStrategy } from "./icon-generator.strategy.mts";
 import { ActionsIconGeneratorStrategy } from "./strategies/actions.icon-generator.strategy.mts";
 import { AppsIconGeneratorStrategy } from "./strategies/apps.icon-generator.strategy.mts";
+import { DevicesIconGeneratorStrategy } from "./strategies/devices.icon-generator.strategy.mts";
 import { MimeTypesIconGeneratorStrategy } from "./strategies/mimetypes.icon-generator.strategy.mts";
 import { PlacesIconGeneratorStrategy } from "./strategies/places.icon-generator.strategy.mts";
 import { ScalableAppsIconGeneratorStrategy } from "./strategies/scalable-apps.icon-generator.strategy.mts";
+import { ScalableUserInterfaceGeneratorStrategy } from "./strategies/scalable-ui.icon-generator.strategy.mts";
+import { UserInterfaceIconGeneratorStrategy } from "./strategies/ui.icon-generator.strategy.mts";
 
 export class IconGeneratorContext {
     strategy: IconGeneratorStrategy = new IconGeneratorStrategy()
@@ -34,6 +37,9 @@ export class IconGeneratorContext {
                 case ImageContext.Apps:
                     this.strategy = new AppsIconGeneratorStrategy();
                     break;
+                case ImageContext.Devices:
+                    this.strategy = new DevicesIconGeneratorStrategy();
+                    break;
                 case ImageContext.MimeTypes:
                     this.strategy = new MimeTypesIconGeneratorStrategy();
                     break;
@@ -42,6 +48,12 @@ export class IconGeneratorContext {
                     break;
                 case ImageContext.ScalableApps:
                     this.strategy = new ScalableAppsIconGeneratorStrategy();
+                    break;
+                case ImageContext.ScalableUserInterface:
+                    this.strategy = new ScalableUserInterfaceGeneratorStrategy();
+                    break;
+                case ImageContext.UserInterface:
+                    this.strategy = new UserInterfaceIconGeneratorStrategy();
                     break;
                 default:
                     break;
