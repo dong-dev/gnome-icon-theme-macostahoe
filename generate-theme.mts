@@ -20,6 +20,8 @@ import {
 } from "./models/ini-document.mts";
 import { resolve } from "node:path";
 import { IconGeneratorContext } from "./icon-generator/icon-generator.context.mts";
+import { desktopEnvironment } from "./config.mts";
+import { DesktopEnvironment } from "./types/desktop-environment.enum.mts";
 
 /**
  * Build the theme.index document
@@ -62,7 +64,7 @@ const headerGroup = new GroupElement(
         new ItemElement("Comment", 'macOS Tahoe Icon Theme'),
         new ItemElement("Example", 'folder'),
         new ItemElement("Inherits", [
-            'Adwaita'
+            desktopEnvironment == DesktopEnvironment.Gnome ? 'Adwaita' : 'breeze',
         ].join(",")),
         new LineElement(''),
         new CommentElement('Directory list'),

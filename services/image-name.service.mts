@@ -1,6 +1,8 @@
 import { readFile } from "node:fs/promises";
 import { IniDocument } from "../models/ini-document.mts";
 import type { ImageContext } from "../constants.mts";
+import { desktopEnvironment } from "../config.mts";
+import { DesktopEnvironment } from "../types/desktop-environment.enum.mts";
 
 export class ImageNameService {
     imageNameMap: Record<string, string[]> = {}
@@ -16,7 +18,7 @@ export class ImageNameService {
     }
 
     setContext(imageContext: ImageContext) {
-        this.databasePath = './original/database/image-name-' + imageContext.toString() + '-database.ini';
+        this.databasePath = './original/database/image-name-' + imageContext.toString() + (desktopEnvironment == DesktopEnvironment.Gnome ? "" : "-kde") + '-database.ini';
     }
     setDatabasePath(databasePath: string) {
         this.databasePath = databasePath;
